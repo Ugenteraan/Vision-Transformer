@@ -21,14 +21,13 @@ def collate_fn(batch):
 #load the dataset
 places204_dataset = deeplake.load("hub://activeloop/places205")
 
-dataloader = places204_dataset.dataloader().transform({'images':tform, 'labels':None}).batch(5).shuffle(False).pytorch(collate_fn=collate_fn, decode_method={'images':'pil'}) 
+dataloader = places204_dataset.dataloader().transform({'images':tform, 'labels':None}).batch(3).shuffle(False).pytorch(collate_fn=collate_fn, decode_method={'images':'pil'}) 
 
 
 for idx, data in enumerate(dataloader):
-    print(data['images'].size())
     
-    res = embedding_class(data['images'])
-    print(res[1].size())
+    patch_embeddings = embedding_class(data['images'])
+        
 
     break
 
