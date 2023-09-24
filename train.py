@@ -1,13 +1,16 @@
 '''Training module for the Vanilla Vision Transformer.
 '''
 
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import deeplake
 import torch
 from torchvision import transforms
+from ViT import patch_embedding
 
-
-tform = transforms.Compose([transforms.ToTensor(), transforms.Grayscale()])
+embedding_class = patch_embedding.PatchEmbedding()
+tform = transforms.Compose([transforms.ToTensor(), transforms.Grayscale(), transforms.Resize((224,224))])
 
 def collate_fn(batch):
     return {
@@ -23,7 +26,10 @@ dataloader = places204_dataset.dataloader().transform({'images':tform, 'labels':
 
 for idx, data in enumerate(dataloader):
     print(data['images'].size())
-    print(data['labels'])
+    
+    res = embedding_class(data['images'])
+    print(res[1].size())
+
     break
 
 
