@@ -46,5 +46,5 @@ class PositionalEncoder:
         
         self.calc_pos_embedding()
 
-        return self.P
+        return self.P.detach() #make sure there's no gradient flow to this positional encoding matrix.
 

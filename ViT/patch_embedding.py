@@ -6,8 +6,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import torch.nn as nn
 
-from .ImagePatchMLP import ImagePatchMLP
-from .PositionalEncoder import PositionalEncoder
+from .image_patch_mlp import ImagePatchMLP
+from .positional_encoder import PositionalEncoder
 
 class PatchEmbedding(nn.Module):
     '''Responsible for dividing the given image batch into patches and produce an embedding from them.

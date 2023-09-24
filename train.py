@@ -27,7 +27,9 @@ dataloader = places204_dataset.dataloader().transform({'images':tform, 'labels':
 for idx, data in enumerate(dataloader):
     
     patch_embeddings = embedding_class(data['images'])
-        
+    
+    
+
 
     break
 
