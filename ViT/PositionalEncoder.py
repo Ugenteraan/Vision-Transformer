@@ -48,15 +48,3 @@ class PositionalEncoder:
 
         return self.P
 
-
-
-
-if __name__ == '__main__':
-
-    x = PositionalEncoder(token_length=5, output_dim=5, n=100)
-
-    p = x()
-    print(p)
-
-
-
