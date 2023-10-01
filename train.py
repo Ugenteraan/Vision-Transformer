@@ -4,12 +4,18 @@
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+
 import deeplake
 import torch
 from torchvision import transforms
 from ViT import patch_embedding
+from ViT import self_attention
+
+import cred
+
 
 embedding_class = patch_embedding.PatchEmbedding()
+selfattention = self_attention.SelfAttention(patch_dims=256, projection_dim=256)
 tform = transforms.Compose([transforms.ToTensor(), transforms.Grayscale(), transforms.Resize((224,224))])
 
 def collate_fn(batch):
@@ -19,15 +25,19 @@ def collate_fn(batch):
             }
 
 #load the dataset
-places204_dataset = deeplake.load("hub://activeloop/places205")
+places205_dataset = deeplake.load("hub://activeloop/places205", token=cred.ACTIVELOOP_TOKEN)
 
-dataloader = places204_dataset.dataloader().transform({'images':tform, 'labels':None}).batch(3).shuffle(False).pytorch(collate_fn=collate_fn, decode_method={'images':'pil'}) 
+dataloader = places205_dataset.dataloader().transform({'images':tform, 'labels':None}).batch(3).shuffle(False).pytorch(collate_fn=collate_fn, decode_method={'images':'pil'}) 
 
 
 for idx, data in enumerate(dataloader):
     
     patch_embeddings = embedding_class(data['images'])
-    
+    print(patch_embeddings.size())    
+
+    x = selfattention(patch_embeddings)
+    print(x.size())
+    print(x)
     
 
 
