@@ -8,7 +8,7 @@ import torch
 import torch.nn.functional as F
 import torch.nn as nn
 import einops.layers.torch as einops_torch
-
+import time
 
 
 class MultiHeadAttentionTorch(nn.Module):
@@ -43,8 +43,8 @@ class MultiHeadAttentionTorch(nn.Module):
         qk = self.Wq_Wk(x)
         v = self.Wv(X)
 
-        qk_reshaped = qk.reshape(2, 50, self.num_heads, self.projection_dim_keys//self.num_heads, 2)
-        v_reshaped = v.reshape(2, 50, self.num_heads, self.projection_dim_keys//self.num_heads, 1)
+        qk_reshaped = qk.reshape(qk.size(0), qk.size(1), self.num_heads, self.projection_dim_keys//self.num_heads, 2)
+        v_reshaped = v.reshape(qk.size(0), qk.size(1), self.num_heads, self.projection_dim_keys//self.num_heads, 1)
 
         qk_rearranged = qk_reshaped.permute(4, 0, 2, 1, 3)
         v_rearranged = v_reshaped.permute(4, 0, 2, 1, 3)
@@ -147,8 +147,9 @@ class MultiHeadAttentionEinops(nn.Module):
         return multi_head_projection 
 
 
-'''code below was used to verify the output from both the implementations.
+'''code below was used to verify the output from both the implementations and to check the performance.
 if __name__ == '__main__':
+    
     
     x = torch.randn(2, 50, 128)
     mhsa = MultiHeadAttentionTorch(patch_embedding_dim=128, projection_dim_keys=128, projection_dim_values=128, num_heads=8, attn_dropout_prob=0)
@@ -157,4 +158,23 @@ if __name__ == '__main__':
 
     equal = torch.isclose(X, Y)
     print(equal)
+    
+    
+    
+    #check the performance
+    x = torch.randn(15, 196, 512)
+    start_time = time.time()
+    mhsa = MultiHeadAttentionTorch(patch_embedding_dim=512, projection_dim_keys=512, projection_dim_values=512, num_heads=8, attn_dropout_prob=0)
+    out = mhsa(x)
+    end_time = time.time()
+    print("time taken with pytorch implementation: ", end_time-start_time)
+    
+    start_time = time.time()
+    mhsa = MultiHeadAttentionEinops(patch_embedding_dim=512, projection_dim_keys=512, projection_dim_values=512, num_heads=8, attn_dropout_prob=0)
+    out = mhsa(x)
+    end_time = time.time()
+    print("time taken with einops implementation: ", end_time-start_time)
+    
+    #from the comparison, it seems like both the implementation gets the job done in almost the same speed performance. However, Einops is slightly faster on average.
+    
 '''
