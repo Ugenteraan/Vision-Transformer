@@ -32,6 +32,7 @@ dataloader = places205_dataset.dataloader().transform({'images':tform, 'labels':
 
 for idx, data in enumerate(dataloader):
     
+    print('patch embedding start')
     patch_embeddings = embedding_class(data['images'])
     print(patch_embeddings.size())    
 

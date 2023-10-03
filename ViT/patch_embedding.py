@@ -6,6 +6,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import torch.nn as nn
 
+import einops
+import einops.layers.torch as einops_torch
+
 from .image_patch_mlp import ImagePatchMLP
 from .positional_encoder import PositionalEncoder
 
@@ -57,10 +60,16 @@ class PatchEmbedding(nn.Module):
         '''
         
         patched_image_tensors = self.unfolding_func(inp) #this will return a tensor of shape [batch size, a single flattened image patch dimension, total number of patches]
-        patched_image_tensors = patched_image_tensors.permute(0, 2, 1) #to keep things consistent with the paper, we permute the dimensions to  [batch size, total number of patches, a single flattened image patch dimension]. Also, the linear projection happens to the image dimensions, not the number of patches. So this makes more sense.
+
+        #pure pytorch
+#        rearranged_image_tensors = patched_image_tensors.permute(0, 2, 1) #to keep things consistent with the paper, we permute the dimensions to  [batch size, total number of patches, a single flattened image patch dimension]. Also, the linear projection happens to the image dimensions, not the number of patches. So this makes more sense.
+
+        #einops equivalent
+        rearranged_image_tensors = einops_torch.Rearrange('b e p -> b p e') #change the position of the embedding (flattened image patch) and the num of patch
+        rearranged_image_tensors = rearranged_image_tensors(patched_image_tensors)
 
 
-        return patched_image_tensors 
+        return rearranged_image_tensors
 
 
     
@@ -80,7 +89,11 @@ class PatchEmbedding(nn.Module):
         positional_encoding_tensor = positional_encoding_module() #tensor of size [num_patches+1, flattened image patch dimension]
 
         #in order to perform element-wise addition to the projected tensor with the CLS token, we're gonna have to stack up the positional encoding for every element in the batch.
-        stacked_pos_enc_tensor = positional_encoding_tensor.unsqueeze(0).repeat_interleave(cls_token_concat_tensors.size(0), dim=0)
+        #stacked_pos_enc_tensor = positional_encoding_tensor.unsqueeze(0).repeat_interleave(cls_token_concat_tensors.size(0), dim=0)
+        
+        #einops equivalent
+        stacked_pos_enc_tensor = einops.repeat(positional_encoding_tensor.unsqueeze(0), '() p e -> b p e', b=patched_image_tensors.size(0))
+
 
         patch_embeddings = torch.add(cls_token_concat_tensors, stacked_pos_enc_tensor)  
 
