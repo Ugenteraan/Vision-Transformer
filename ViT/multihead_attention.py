@@ -38,10 +38,10 @@ class MultiHeadAttentionTorch(nn.Module):
         self.einops_mhsa_concat = einops_torch.Rearrange('b h n e -> b n (h e)') #for the concatenation of the heads.
         '''
 
-    def forward(self, X):
+    def forward(self, x):
 
         qk = self.Wq_Wk(x)
-        v = self.Wv(X)
+        v = self.Wv(x)
 
         qk_reshaped = qk.reshape(qk.size(0), qk.size(1), self.num_heads, self.projection_dim_keys//self.num_heads, 2)
         v_reshaped = v.reshape(qk.size(0), qk.size(1), self.num_heads, self.projection_dim_keys//self.num_heads, 1)
@@ -120,7 +120,7 @@ class MultiHeadAttentionEinops(nn.Module):
         
         self.einops_mhsa_concat = einops_torch.Rearrange('b h n e -> b n (h e)') #for the concatenation of the heads.
     
-    def forward(self, X):
+    def forward(self, x):
         
         qk = self.Wq_Wk(x)
         v = self.Wv(x)
