@@ -51,7 +51,7 @@ class TransformerEncoderBlock(nn.Module):
 
         return feedforward_output
 
-
+'''
 if __name__ == '__main__':
    
     x = torch.randn(2, 50, 128)
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     out = h(x)
     print(out.size())
-
+''''
 
 
 
