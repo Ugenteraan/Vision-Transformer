@@ -76,7 +76,7 @@ def main():
 
             train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions, batch_targets=train_Y)
             train_epoch_accuracy += train_batch_accuracy/len(TRAIN_DATALOADER)
-            train_epoch_loss += train_batch_loss/len(TRAIN_DATALOADER)
+            train_epoch_loss += train_batch_loss.item()/len(TRAIN_DATALOADER)
         
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
@@ -95,7 +95,7 @@ def main():
 
                 test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions, batch_targets=test_Y)
                 test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
-                test_epoch_loss += test_batch_loss/len(TEST_DATALOADER)
+                test_epoch_loss += test_batch_loss.item()/len(TEST_DATALOADER)
 
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
