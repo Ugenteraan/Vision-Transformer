@@ -74,9 +74,12 @@ def main():
             OPTIMIZER.step()
 
 
-            train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions, batch_targets=train_Y)
+            train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions.detach().numpy(), batch_targets=train_Y.detach().numpy())
             train_epoch_accuracy += train_batch_accuracy/len(TRAIN_DATALOADER)
             train_epoch_loss += train_batch_loss.item()/len(TRAIN_DATALOADER)
+
+            if idx == 2:
+                break
         
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
@@ -93,9 +96,12 @@ def main():
                 test_predictions = MODEL(test_X)
                 test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
 
-                test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions, batch_targets=test_Y)
+                test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions.detach().numpy(), batch_targets=test_Y.detach().numpy())
                 test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
                 test_epoch_loss += test_batch_loss.item()/len(TEST_DATALOADER)
+
+            if idx == 2:
+                break
 
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
