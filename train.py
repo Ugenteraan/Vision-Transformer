@@ -78,17 +78,18 @@ def main():
 
         test_epoch_accuracy = 0
         test_epoch_loss = 0
-        MODEL.eval()
-        for idx, data in enumerate(TEST_DATALOADER):
 
-            test_X,test_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
+        with torch.no_grad():
+            for idx, data in enumerate(TEST_DATALOADER):
 
-            test_predictions = MODEL(test_X)
-            test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
+                test_X,test_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
 
-            test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions, batch_targets=test_Y)
-            test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
-            test_epoch_loss += test_batch_loss/len(TEST_DATALOADER)
+                test_predictions = MODEL(test_X)
+                test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
+
+                test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions, batch_targets=test_Y)
+                test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
+                test_epoch_loss += test_batch_loss/len(TEST_DATALOADER)
 
 
         print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss}\n\n")

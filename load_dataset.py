@@ -57,6 +57,7 @@ class LoadDeeplakeDataset:
 
         places205_dataset = deeplake.load(self.deeplake_ds_name, token=self.token)
 
+        dataloader = None
         if self.mode == 'train':
             dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'car_models':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
         else:
