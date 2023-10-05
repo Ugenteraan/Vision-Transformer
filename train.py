@@ -5,6 +5,7 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tqdm import tqdm
+from pathlib import Path
 import deeplake
 import torch
 import torch.nn as nn
@@ -46,6 +47,11 @@ summary(MODEL, (cfg.IMAGE_CHANNEL, cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH))
 def main():
     
     best_accuracy = 0
+    #create folders if doesn't exist.
+    Path(f'{cfg.MODEL_SAVE_FOLDER}').mkdir(parents=True, exist_ok=True)
+    Path(f'{cfg.GRAPH_SAVE_FOLDER}').mkdir(parents=True, exist_ok=True)
+ 
+
     for epoch_idx in tqdm(range(cfg.TRAIN_EPOCH)):
 
         train_epoch_accuracy = 0
@@ -68,7 +74,7 @@ def main():
             train_epoch_accuracy += train_batch_accuracy/len(TRAIN_DATALOADER)
             train_epoch_loss += train_batch_loss/len(TRAIN_DATALOADER)
 
-        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTesting Loss: {train_epoch_loss}\n\n")
+        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\n\n")
 
         test_epoch_accuracy = 0
         test_epoch_loss = 0
@@ -86,14 +92,21 @@ def main():
 
 
         print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss}\n\n")
-
-
+        
+        #plot a graph of accuracy and loss for train vs test.
+        utils.plot_loss_acc(path=cfg.GRAPH_SAVE_FOLDER, 
+                            num_epoch=epoch_idx, 
+                            train_accuracies=train_epoch_accuracy,
+                            train_losses=train_epoch_loss,
+                            test_accuracies=test_epoch_accuracy, 
+                            test_losses=test_epoch_loss)
         
         #save the model with the best test accuracy.
         if test_epoch_accuracy > best_accuracy:
+            
             torch.save(MODEL, f"{cfg.MODEL_SAVE_FOLDER}model.pth")
 
-
+        
 
 
 
