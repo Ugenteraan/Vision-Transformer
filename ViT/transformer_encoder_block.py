@@ -7,8 +7,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import torch.nn as nn
 
-from multihead_attention import MultiHeadAttentionEinops
-from feedforward_block import FeedForwardEncoderBlock
+from .multihead_attention import MultiHeadAttentionEinops
+from .feedforward_block import FeedForwardEncoderBlock
 
 class TransformerEncoderBlock(nn.Module):
     '''A single transformer encoder block.
@@ -60,7 +60,7 @@ if __name__ == '__main__':
 
     out = h(x)
     print(out.size())
-''''
+'''
 
 
 

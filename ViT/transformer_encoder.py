@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch.nn as nn
 
-from transformer_encoder_block import TransformerEncoderBlock
+from .transformer_encoder_block import TransformerEncoderBlock
 
 class TransformerEncoderNetwork(nn.Sequential):
     '''Creates multiple transformer encoders to form a network.
