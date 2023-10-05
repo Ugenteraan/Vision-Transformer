@@ -45,12 +45,12 @@ TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_n
 summary(MODEL, (cfg.IMAGE_CHANNEL, cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH))
 
 def main():
-    
+
     best_accuracy = 0
     #create folders if doesn't exist.
     Path(f'{cfg.MODEL_SAVE_FOLDER}').mkdir(parents=True, exist_ok=True)
     Path(f'{cfg.GRAPH_SAVE_FOLDER}').mkdir(parents=True, exist_ok=True)
-    
+
     total_train_epoch_accuracy = []
     total_train_epoch_loss = []
     total_test_epoch_accuracy = []
@@ -74,13 +74,12 @@ def main():
             OPTIMIZER.step()
 
 
-            train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions.detach().cpu().numpy(), batch_targets=train_Y.detach().cpu()numpy())
+            train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions.detach(), batch_targets=train_Y.detach())
             train_epoch_accuracy += train_batch_accuracy/len(TRAIN_DATALOADER)
             train_epoch_loss += train_batch_loss.item()/len(TRAIN_DATALOADER)
 
-            if idx == 2:
-                break
-        
+
+
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
         print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\n\n")
@@ -96,31 +95,30 @@ def main():
                 test_predictions = MODEL(test_X)
                 test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
 
-                test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions.detach().cpu().numpy(), batch_targets=test_Y.detach().cpu().numpy())
+                test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions.detach(), batch_targets=test_Y.detach())
                 test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
                 test_epoch_loss += test_batch_loss.item()/len(TEST_DATALOADER)
 
-            if idx == 2:
-                break
+
 
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
 
         print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss}\n\n")
-        
+
         #plot a graph of accuracy and loss for train vs test.
-        utils.plot_loss_acc(path=cfg.GRAPH_SAVE_FOLDER, 
-                            num_epoch=epoch_idx, 
+        utils.plot_loss_acc(path=cfg.GRAPH_SAVE_FOLDER,
+                            num_epoch=epoch_idx,
                             train_accuracies=total_train_epoch_accuracy,
                             train_losses=total_train_epoch_loss,
-                            test_accuracies=total_test_epoch_accuracy, 
+                            test_accuracies=total_test_epoch_accuracy,
                             test_losses=total_test_epoch_loss)
-        
+
         #save the model with the best test accuracy.
         if test_epoch_accuracy > best_accuracy:
             torch.save(MODEL, f"{cfg.MODEL_SAVE_FOLDER}model.pth")
 
-        
+
 
 
 
