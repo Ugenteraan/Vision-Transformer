@@ -31,7 +31,8 @@ MODEL = VisionTransformer(image_height=cfg.IMAGE_HEIGHT,
                           num_heads=cfg.NUM_HEADS,
                           attn_dropout_prob=cfg.ATTN_DROPOUT_PROB,
                           feedforward_projection_dim=cfg.FEEDFORWARD_PROJECTION_DIM,
-                          feedforward_dropout_prob=cfg.FEEDFORWARD_DROPOUT_PROB).to(DEVICE)
+                          feedforward_dropout_prob=cfg.FEEDFORWARD_DROPOUT_PROB,
+                          device=DEVICE).to(DEVICE)
 
 CRITERION = nn.CrossEntropyLoss()
 OPTIMIZER = torch.optim.Adam(MODEL.parameters(), lr=cfg.LEARNING_RATE)
@@ -45,20 +46,19 @@ summary(MODEL, (cfg.IMAGE_CHANNEL, cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH))
 def main():
 
     for epoch_idx in tqdm(range(cfg.TRAIN_EPOCH)):
-        
+
         train_epoch_accuracy = 0
         train_epoch_loss = 0
         MODEL.train() #set the model to training mode.
 
         for idx, data in enumerate(TRAIN_DATALOADER):
-        
-            train_X,train_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE) 
+
+            train_X, train_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
 
             OPTIMIZER.zero_grad() #clear the optimizer.
 
             train_predictions = MODEL(train_X)
-            
-            train_batch_loss = CRITERION(train_predictions, train_Y)
+            train_batch_loss = CRITERION(train_predictions, train_Y.reshape(-1))
             train_batch_loss.backward()
             OPTIMIZER.step()
 
@@ -68,16 +68,16 @@ def main():
             train_epoch_loss += train_batch_loss/len(TRAIN_DATALOADER)
 
         print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTesting Loss: {train_epoch_loss}\n\n")
-        
+
         test_epoch_accuracy = 0
         test_epoch_loss = 0
         MODEL.eval()
         for idx, data in enumerate(TEST_DATALOADER):
 
             test_X,test_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
-            
+
             test_predictions = MODEL(test_X)
-            test_batch_loss = CRITERION(test_predictions, test_Y)
+            test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
 
             test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions, batch_targets=test_Y)
             test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
@@ -89,7 +89,7 @@ def main():
 
 
 
-            
+
 
 
 if __name__ == '__main__':
