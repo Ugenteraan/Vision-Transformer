@@ -44,7 +44,8 @@ TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_n
 summary(MODEL, (cfg.IMAGE_CHANNEL, cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH))
 
 def main():
-
+    
+    best_accuracy = 0
     for epoch_idx in tqdm(range(cfg.TRAIN_EPOCH)):
 
         train_epoch_accuracy = 0
@@ -87,6 +88,10 @@ def main():
         print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss}\n\n")
 
 
+        
+        #save the model with the best test accuracy.
+        if test_epoch_accuracy > best_accuracy:
+            torch.save(MODEL, f"{cfg.MODEL_SAVE_FOLDER}model.pth")
 
 
 
