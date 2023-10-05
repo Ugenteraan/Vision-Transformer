@@ -31,7 +31,7 @@ MODEL = VisionTransformer(image_height=cfg.IMAGE_HEIGHT,
                           num_heads=cfg.NUM_HEADS,
                           attn_dropout_prob=cfg.ATTN_DROPOUT_PROB,
                           feedforward_projection_dim=cfg.FEEDFORWARD_PROJECTION_DIM,
-                          feedforward_dropout_prob=cfg.FEEDFORWARD_DROPOUT_PROB)
+                          feedforward_dropout_prob=cfg.FEEDFORWARD_DROPOUT_PROB).to(DEVICE)
 
 CRITERION = nn.CrossEntropyLoss()
 OPTIMIZER = torch.optim.Adam(MODEL.parameters(), lr=cfg.LEARNING_RATE)
