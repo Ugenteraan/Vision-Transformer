@@ -14,7 +14,7 @@ class TransformerEncoderBlock(nn.Module):
     '''A single transformer encoder block.
     '''
 
-    def __init__(self, patch_embedding_dim,  projection_dim_keys, projection_dim_values, num_heads, attn_dropout_prob, feedforward_projection_dim, feedforward_dropout_prob):
+    def __init__(self, patch_embedding_dim,  projection_dim_keys, projection_dim_values, num_heads, attn_dropout_prob, feedforward_projection_dim, feedforward_dropout_prob, device):
 
         super(TransformerEncoderBlock, self).__init__()
         
@@ -25,14 +25,14 @@ class TransformerEncoderBlock(nn.Module):
                                              projection_dim_keys=projection_dim_keys,
                                              projection_dim_values=projection_dim_values,
                                              num_heads=num_heads,
-                                             attn_dropout_prob=attn_dropout_prob)
+                                             attn_dropout_prob=attn_dropout_prob).to(device)
                 )
 
         self.feedforward_block = nn.Sequential(
                     nn.LayerNorm(patch_embedding_dim),
                     FeedForwardEncoderBlock(patch_embedding_dim=patch_embedding_dim,
                                             feedforward_projection_dim=feedforward_projection_dim,
-                                            feedforward_dropout_prob=feedforward_dropout_prob)
+                                            feedforward_dropout_prob=feedforward_dropout_prob).to(device)
                     )
 
 

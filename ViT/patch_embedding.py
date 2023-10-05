@@ -17,7 +17,7 @@ class PatchEmbedding(nn.Module):
     '''
 
 
-    def __init__(self, image_height=224, image_width=224, image_channel=3, patch_size=16):
+    def __init__(self, image_height=224, image_width=224, image_channel=3, patch_size=16, device='cpu'):
         '''Param init.
         '''
         super(PatchEmbedding, self).__init__()
@@ -27,6 +27,7 @@ class PatchEmbedding(nn.Module):
         self.image_channel = image_channel
         self.patch_size = patch_size
         self.patch_embedding_dim = patch_size * patch_size * image_channel 
+        self.device = device
         
         #initialize the linear projection module.
         self.patch_linear_module = ImagePatchMLP(flattened_img_dimension=(patch_size**2)*self.image_channel, output_dimension=self.patch_embedding_dim)
@@ -47,7 +48,7 @@ class PatchEmbedding(nn.Module):
             patched_image_tensors -- A tensor of shape [batch size, total number of patches, a single flattened image dimension].
         '''
         batch_size = linear_projected_tensors.size(0)
-        cls_token = torch.ones(batch_size, 1, self.patch_embedding_dim)
+        cls_token = torch.ones(batch_size, 1, self.patch_embedding_dim).to(self.device)
 
         cls_concat_tensors = torch.cat([linear_projected_tensors, cls_token], dim=1)
 
