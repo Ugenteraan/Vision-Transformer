@@ -14,7 +14,7 @@ def calculate_accuracy(batch_predictions, batch_targets):
 
 
 def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
-                    test_accuracies, test_losses, rank):
+                    test_accuracies, test_losses, rank=1):
     '''
     Plot line graphs for the accuracies and loss at every epochs for both training and testing.
     '''
