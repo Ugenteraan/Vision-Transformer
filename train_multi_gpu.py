@@ -78,9 +78,13 @@ def main(gpu):
         train_epoch_loss = 0
         MODEL.train() #set the model to training mode.
 
-        for idx, data in enumerate(TRAIN_DATALOADER):
+        total_train_data=0 #to verify the distributed training.
+        train_idx = 0
+        for train_idx, data in enumerate(TRAIN_DATALOADER):
 
             train_X, train_Y = data['images'].cuda(non_blocking=True), data['labels'].cuda(non_blocking=True)
+            train_batch_size = train_X.detach().cpu().size(0)
+
             OPTIMIZER.zero_grad() #clear the optimizer.
 
             train_predictions = MODEL(train_X)
@@ -90,37 +94,44 @@ def main(gpu):
 
 
             train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions.detach(), batch_targets=train_Y.detach())
-            train_epoch_accuracy += train_batch_accuracy/len(TRAIN_DATALOADER)
-            train_epoch_loss += train_batch_loss.item()/len(TRAIN_DATALOADER)
+            train_epoch_accuracy += train_batch_accuracy
+            train_epoch_loss += train_batch_loss.item()
+            total_train_data += train_batch_size
 
-
+        train_epoch_accuracy /= train_idx+1
+        train_epoch_loss /= train_idx+1
 
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
-        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\n")
 
         test_epoch_accuracy = 0
         test_epoch_loss = 0
 
+        total_test_data = 0 #to verify the distributed training.
+        test_idx = 0
         MODEL.eval() #change to eval mode for testing.
         with torch.no_grad():
-            for idx, data in enumerate(TEST_DATALOADER):
+            for test_idx, data in enumerate(TEST_DATALOADER):
 
                 test_X,test_Y = data['images'].cuda(non_blocking=True), data['labels'].cuda(non_blocking=True)
+                test_batch_size = test_X.detach().cpu().size(0)
 
                 test_predictions = MODEL(test_X)
                 test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
 
                 test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions.detach(), batch_targets=test_Y.detach())
-                test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
-                test_epoch_loss += test_batch_loss.item()/len(TEST_DATALOADER)
+                test_epoch_accuracy += test_batch_accuracy
+                test_epoch_loss += test_batch_loss.item()
+                total_test_data += test_batch_size
 
+        test_epoch_accuracy /= test_idx+1
+        test_epoch_loss /= test_idx+1
 
 
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
 
-        print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss}\n\n")
+        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTesting Accuracy: {test_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\nTesting Loss: {test_epoch_loss}\nFrom Rank: {RANK}\nTrained on: {total_train_data}\n Tested on: {total_test_data}\n\n")
 
         #plot a graph of accuracy and loss for train vs test.
         utils.plot_loss_acc(path=cfg.GRAPH_SAVE_FOLDER,
