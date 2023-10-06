@@ -39,8 +39,8 @@ CRITERION = nn.CrossEntropyLoss()
 OPTIMIZER = torch.optim.Adam(MODEL.parameters(), lr=cfg.LEARNING_RATE)
 # SCHEDULER = torch.optim.lr_scheduler.StepLR(OPTIMIZER, step_size=cfg.SCHEDULER_STEP_SIZE, gamma=cfg.SCHEDULER_GAMMA)
 
-TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/stanford-cars-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE)()
-TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/stanford-cars-test", batch_size=cfg.BATCH_SIZE, shuffle=False)()
+TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/animal10n-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE)()
+TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/animal10n-test", batch_size=cfg.BATCH_SIZE, shuffle=False)()
 
 summary(MODEL, (cfg.IMAGE_CHANNEL, cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH))
 
@@ -86,17 +86,18 @@ def main():
         test_epoch_accuracy = 0
         test_epoch_loss = 0
 
-        MODEL.eval() #change to eval mode for testing. 
-        for idx, data in enumerate(TEST_DATALOADER):
+        MODEL.eval() #change to eval mode for testing.
+        with torch.no_grad():
+            for idx, data in enumerate(TEST_DATALOADER):
 
-            test_X,test_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
+                test_X,test_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
 
-            test_predictions = MODEL(test_X)
-            test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
+                test_predictions = MODEL(test_X)
+                test_batch_loss = CRITERION(test_predictions, test_Y.reshape(-1))
 
-            test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions.detach(), batch_targets=test_Y.detach())
-            test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
-            test_epoch_loss += test_batch_loss.item()/len(TEST_DATALOADER)
+                test_batch_accuracy = utils.calculate_accuracy(batch_predictions=test_predictions.detach(), batch_targets=test_Y.detach())
+                test_epoch_accuracy += test_batch_accuracy/len(TEST_DATALOADER)
+                test_epoch_loss += test_batch_loss.item()/len(TEST_DATALOADER)
 
 
 

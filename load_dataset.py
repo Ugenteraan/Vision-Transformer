@@ -31,7 +31,7 @@ class LoadDeeplakeDataset:
         '''
         return {
                 'images': torch.stack([x['images'] for x in batch_data]),
-                'labels': torch.stack([torch.from_numpy(x['car_models']) for x in batch_data])
+                'labels': torch.stack([torch.from_numpy(x['labels']) for x in batch_data])
             }
 
     @staticmethod
@@ -59,9 +59,9 @@ class LoadDeeplakeDataset:
 
         dataloader = None
         if self.mode == 'train':
-            dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'car_models':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
+            dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
         else:
-            dataloader = places205_dataset.dataloader().transform({'images':self.testing_transformation(), 'car_models':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
+            dataloader = places205_dataset.dataloader().transform({'images':self.testing_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
 
         return dataloader
 
