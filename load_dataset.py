@@ -15,7 +15,7 @@ class LoadDeeplakeDataset:
     '''Load a dataset from the Deeplake API.
     '''
 
-    def __init__(self, token, deeplake_ds_name, batch_size, shuffle, num_workers, world_size, rank, pin_memory=True, mode='train'):
+    def __init__(self, token, deeplake_ds_name, batch_size, shuffle, mode='train'):
         '''Param init.
         '''
 
@@ -24,10 +24,6 @@ class LoadDeeplakeDataset:
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.mode = mode
-        self.pin_memory = pin_memory
-        self.num_workers = num_workers
-        self.world_size = world_size
-        self.rank = rank
 
 
     def collate_fn(self, batch_data):
@@ -60,20 +56,14 @@ class LoadDeeplakeDataset:
     def __call__(self):
 
         places205_dataset = deeplake.load(self.deeplake_ds_name, token=self.token)
-        train_sampler = torch.utils.data.distributed.DistributedSampler(places205_dataset, num_replicas=self.world_size, rank=self.rank)
 
+        dataloader = None
         if self.mode == 'train':
-            dataloader = places205_dataset.pytorch(batch_size=self.batch_size, shuffle=self.shuffle, num_workers=self.num_workers, transform={'images':self.training_transformation(), 'labels':None}, collate_fn=self.collate_fn, decode_method={'images':'pil'}, sampler=train_sampler)
+            dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
         else:
-            dataloader = places205_dataset.pytorch(batch_size=self.batch_size, shuffle=self.shuffle, num_workers=self.num_workers, transform={'images':self.testing_transformation(), 'labels':None}, collate_fn=self.collate_fn, decode_method={'images':'pil'})
-        # dataloader = None
-        # if self.mode == 'train':
-        #     dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).num_workers(self.num_workers).pin_memory(self.pin_memory).sampler(train_sampler).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
-        # else:
-        #     dataloader = places205_dataset.dataloader().transform({'images':self.testing_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).num_workers(self.num_workers).pin_memory(self.pin_memory).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
+            dataloader = places205_dataset.dataloader().transform({'images':self.testing_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
 
         return dataloader
-
 
 
 

@@ -15,7 +15,7 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 
 from ViT.ViT import VisionTransformer
-from load_dataset import LoadDeeplakeDataset
+from load_dataset_multi_gpu import LoadDeeplakeDataset
 import cred
 import cfg
 import utils
