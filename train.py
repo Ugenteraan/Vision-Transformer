@@ -65,7 +65,6 @@ def main():
         for idx, data in enumerate(TRAIN_DATALOADER):
 
             train_X, train_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
-
             OPTIMIZER.zero_grad() #clear the optimizer.
 
             train_predictions = MODEL(train_X)
@@ -82,12 +81,12 @@ def main():
 
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
-        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\n\n")
+        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\n")
 
         test_epoch_accuracy = 0
         test_epoch_loss = 0
 
-        with torch.no_grad():
+        with torch.set_grad_enabled(False):
             for idx, data in enumerate(TEST_DATALOADER):
 
                 test_X,test_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
@@ -117,6 +116,7 @@ def main():
         #save the model with the best test accuracy.
         if test_epoch_accuracy > best_accuracy:
             torch.save(MODEL, f"{cfg.MODEL_SAVE_FOLDER}model.pth")
+            best_accuracy = test_epoch_accuracy
 
 
 
