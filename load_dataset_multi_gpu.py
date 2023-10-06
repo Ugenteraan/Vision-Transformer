@@ -65,7 +65,7 @@ class LoadDeeplakeDataset:
         if self.mode == 'train':
             dataloader = places205_dataset.pytorch(batch_size=self.batch_size, distributed=True, shuffle=self.shuffle, num_workers=self.num_workers, transform={'images':self.training_transformation(), 'labels':None}, collate_fn=self.collate_fn, decode_method={'images':'pil'}, sampler=sampler)
         else:
-            dataloader = places205_dataset.pytorch(batch_size=self.batch_size, distributed=True, shuffle=self.shuffle, num_workers=self.num_workers, transform={'images':self.testing_transformation(), 'labels':None}, collate_fn=self.collate_fn, decode_method={'images':'pil'}, sampler=sampler)
+            dataloader = places205_dataset.pytorch(batch_size=self.batch_size, distributed=False, shuffle=self.shuffle, num_workers=self.num_workers, transform={'images':self.testing_transformation(), 'labels':None}, collate_fn=self.collate_fn, decode_method={'images':'pil'}) #no need sampler here since we want to test the model with all the test data.
         # dataloader = None
         # if self.mode == 'train':
         #     dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).num_workers(self.num_workers).pin_memory(self.pin_memory).sampler(train_sampler).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
