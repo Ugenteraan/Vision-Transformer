@@ -139,7 +139,8 @@ def main(gpu):
                             train_accuracies=total_train_epoch_accuracy,
                             train_losses=total_train_epoch_loss,
                             test_accuracies=total_test_epoch_accuracy,
-                            test_losses=total_test_epoch_loss)
+                            test_losses=total_test_epoch_loss,
+                            rank=RANK)
 
         #save the model with the best test accuracy.
         if test_epoch_accuracy > best_accuracy:
