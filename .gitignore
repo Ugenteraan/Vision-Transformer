@@ -4,8 +4,10 @@ __pycache__/
 *$py.class
 cred.py
 **/*.pth
+**.log
 **/*.pt
 # C extensions
+
 *.so
 
 # Distribution / packaging
