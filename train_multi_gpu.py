@@ -14,12 +14,14 @@ from torchsummary import summary
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
+
 from ViT.ViT import VisionTransformer
 from load_dataset_multi_gpu import LoadDeeplakeDataset
 import cred
 import cfg
 import utils
 
+mp.set_sharing_strategy('file_system') #to avoid shared memory handles limit when there are too many batches at DataLoader.
 
 
 
