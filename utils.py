@@ -52,6 +52,8 @@ def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
     else:
         plt.savefig(path+f'loss_epoch_rank-{rank}.png')
 
+    plt.close()
+
     return None
 
 
