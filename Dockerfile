@@ -10,10 +10,10 @@ RUN apt-get install -y libglib2.0-0 libsm6 libxrender1 \
 RUN apt install python3 python3-pip -y
 RUN pip3 install --upgrade pip setuptools wheel
 RUN pip3 install numpy
-RUN pip3 install opencv-python3
-RUN pip3 install Cython scipy pandas
-RUN pip3 install scikit-image torchvision
+RUN pip3 install Cython scipy pandas seaborn
+RUN pip3 install Pillow torchvision
 RUN pip3 install "deeplake[enterprise]"
+RUN pip3 install einops
 
 
 COPY . /home
