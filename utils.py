@@ -14,7 +14,7 @@ def calculate_accuracy(batch_predictions, batch_targets):
 
 
 def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
-                    test_accuracies, test_losses, rank=1):
+                    test_accuracies, test_losses, rank=None):
     '''
     Plot line graphs for the accuracies and loss at every epochs for both training and testing.
     '''
@@ -31,7 +31,10 @@ def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
 
     sns.lineplot(data=data, x='Epochs', y='Accuracy', hue='Mode')
     plt.title('Accuracy Graph')
-    plt.savefig(path+f'accuracy_epoch_rank-{rank}.png')
+    if not rank is None:
+        plt.savefig(path+f'accuracy_epoch.png')
+    else:
+        plt.savefig(path+f'accuracy_epoch_rank-{rank}.png')
 
     plt.clf()
 
@@ -44,7 +47,10 @@ def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
     sns.lineplot(data=data, x='Epochs', y='Loss', hue='Mode')
     plt.title('Loss Graph')
 
-    plt.savefig(path+f'loss_epoch_rank-{rank}.png')
+    if not rank is None:
+        plt.savefig(path+f'loss_epoch.png')
+    else:
+        plt.savefig(path+f'loss_epoch_rank-{rank}.png')
 
     return None
 
