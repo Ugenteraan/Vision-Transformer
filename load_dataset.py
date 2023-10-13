@@ -38,18 +38,22 @@ class LoadDeeplakeDataset:
     def training_transformation():
 
         return transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize((224, 224)),
-            transforms.RandomResizedCrop(224),
+            transforms.RandomRotation(20),
             transforms.RandomHorizontalFlip(),
-            transforms.Grayscale(),
+            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1)),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             transforms.ToTensor()
         ])
 
     @staticmethod
     def testing_transformation():
         return  transforms.Compose([
-            transforms.Resize((224,224)),
-            transforms.Grayscale(),
+            transforms.ToPILImage(),
+            transforms.Resize((224, 224)),
+            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1)),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             transforms.ToTensor()
         ])
 

@@ -61,8 +61,8 @@ def main(gpu):
 
 
 
-    TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/wider-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
-    TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/wider-test", batch_size=cfg.BATCH_SIZE, shuffle=False, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
+    TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/imagenet-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
+    TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/imagenet-test", batch_size=cfg.BATCH_SIZE, shuffle=False, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
 
     best_accuracy = 0
     #create folders if doesn't exist.
@@ -108,6 +108,10 @@ def main(gpu):
 
         test_epoch_accuracy = 0
         test_epoch_loss = 0
+
+        #we don't want to perform testing at every epoch
+        if not epoch_idx % 5 == 0:
+            continue
 
         total_test_data = 0 #to verify the distributed training.
         test_idx = 0
