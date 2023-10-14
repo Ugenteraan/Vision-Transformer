@@ -13,8 +13,8 @@ def calculate_accuracy(batch_predictions, batch_targets):
 
 
 
-def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
-                    test_accuracies, test_losses, rank=None):
+def plot_loss_acc(path, num_epoch,  train_accuracies, train_losses,
+                    test_accuracies, test_losses, rank=None, epoch_step=1):
     '''
     Plot line graphs for the accuracies and loss at every epochs for both training and testing.
     '''
@@ -22,7 +22,7 @@ def plot_loss_acc(path, num_epoch, train_accuracies, train_losses,
     fig = plt.figure(figsize=(20, 5))
     plt.clf()
 
-    epochs = [x for x in range(num_epoch+1)]
+    epochs = [x for x in range(0, num_epoch+1, epoch_step)]
 
     train_accuracy_df = pd.DataFrame({"Epochs":epochs, "Accuracy":train_accuracies, "Mode":['train']*(num_epoch+1)})
     test_accuracy_df = pd.DataFrame({"Epochs":epochs, "Accuracy":test_accuracies, "Mode":['test']*(num_epoch+1)})

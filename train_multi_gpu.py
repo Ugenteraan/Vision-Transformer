@@ -74,6 +74,8 @@ def main(gpu):
     total_test_epoch_accuracy = []
     total_test_epoch_loss = []
 
+    plotting_epoch_step = 5 #plot at every n epoch.
+
     for epoch_idx in tqdm(range(cfg.TRAIN_EPOCH)):
 
         train_epoch_accuracy = 0
@@ -111,7 +113,7 @@ def main(gpu):
 
         print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\nTrained on: {total_train_data}\n ")
         #we don't want to perform testing at every epoch
-        if not epoch_idx % 5 == 0:
+        if not epoch_idx % plotting_epoch_step == 0:
             continue
 
         total_train_epoch_accuracy.append(train_epoch_accuracy)
@@ -150,7 +152,8 @@ def main(gpu):
                             train_losses=total_train_epoch_loss,
                             test_accuracies=total_test_epoch_accuracy,
                             test_losses=total_test_epoch_loss,
-                            rank=RANK)
+                            rank=RANK,
+                            epoch_step=plotting_epoch_step)
 
         #save the model with the best test accuracy.
         if test_epoch_accuracy > best_accuracy:
