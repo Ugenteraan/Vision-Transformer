@@ -24,8 +24,8 @@ def plot_loss_acc(path, num_epoch,  train_accuracies, train_losses,
 
     epochs = [x for x in range(0, num_epoch+1, epoch_step)]
 
-    train_accuracy_df = pd.DataFrame({"Epochs":epochs, "Accuracy":train_accuracies, "Mode":['train']*(num_epoch+1)})
-    test_accuracy_df = pd.DataFrame({"Epochs":epochs, "Accuracy":test_accuracies, "Mode":['test']*(num_epoch+1)})
+    train_accuracy_df = pd.DataFrame({"Epochs":epochs, "Accuracy":train_accuracies, "Mode":['train']*len(epochs)})
+    test_accuracy_df = pd.DataFrame({"Epochs":epochs, "Accuracy":test_accuracies, "Mode":['test']*len(epochs)})
 
     data = pd.concat([train_accuracy_df, test_accuracy_df])
 
@@ -39,8 +39,8 @@ def plot_loss_acc(path, num_epoch,  train_accuracies, train_losses,
     plt.clf()
 
 
-    train_loss_df = pd.DataFrame({"Epochs":epochs, "Loss":train_losses, "Mode":['train']*(num_epoch+1)})
-    test_loss_df = pd.DataFrame({"Epochs":epochs, "Loss":test_losses, "Mode":['test']*(num_epoch+1)})
+    train_loss_df = pd.DataFrame({"Epochs":epochs, "Loss":train_losses, "Mode":['train']*len(epochs)})
+    test_loss_df = pd.DataFrame({"Epochs":epochs, "Loss":test_losses, "Mode":['test']*len(epochs)})
 
     data = pd.concat([train_loss_df, test_loss_df])
 
