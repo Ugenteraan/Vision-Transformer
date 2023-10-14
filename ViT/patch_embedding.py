@@ -49,7 +49,7 @@ class PatchEmbedding(nn.Module):
         '''
         batch_size = linear_projected_tensors.size(0)
 
-        cls_token = nn.Parameter(torch.randn(1, 1, self.patch_embedding_dim))
+        cls_token = nn.Parameter(torch.randn(1, 1, self.patch_embedding_dim)).to(self.device)
         batched_cls_token = einops.repeat(cls_token, '() n e -> b n e', b=batch_size)
 
         cls_concat_tensor = torch.cat([batched_cls_token, linear_projected_tensors], dim=1)
