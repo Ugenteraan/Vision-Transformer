@@ -94,6 +94,7 @@ def main():
         test_epoch_accuracy = 0
         test_epoch_loss = 0
 
+        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\nTrained on: {total_train_data}\n ")
         #we don't want to perform testing at every epoch
         if not epoch_idx % 5 == 0:
             continue
@@ -121,7 +122,7 @@ def main():
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
 
-        print(f"Epoch {epoch_idx} :\nTraining Accuracy: {train_epoch_accuracy}\nTesting Accuracy: {test_epoch_accuracy}\nTraining Loss: {train_epoch_loss}\nTesting Loss: {test_epoch_loss}\nTrained on: {total_train_data}\n Tested on: {total_test_data}\n\n")
+        print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss} Tested on: {total_test_data}\n\n")
 
         #plot a graph of accuracy and loss for train vs test.
         utils.plot_loss_acc(path=cfg.GRAPH_SAVE_FOLDER,
