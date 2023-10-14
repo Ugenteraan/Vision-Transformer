@@ -87,9 +87,6 @@ def main():
         train_epoch_accuracy /= train_idx
         train_epoch_loss /= train_idx
 
-        total_train_epoch_accuracy.append(train_epoch_accuracy)
-        total_train_epoch_loss.append(train_epoch_loss)
-
 
         test_epoch_accuracy = 0
         test_epoch_loss = 0
@@ -98,6 +95,9 @@ def main():
         #we don't want to perform testing at every epoch
         if not epoch_idx % 5 == 0:
             continue
+
+        total_train_epoch_accuracy.append(train_epoch_accuracy)
+        total_train_epoch_loss.append(train_epoch_loss)
 
         total_test_data = 0
         test_idx = 0
