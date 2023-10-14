@@ -61,8 +61,8 @@ def main(gpu):
 
 
 
-    TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/imagenet-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
-    TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/imagenet-val", batch_size=cfg.BATCH_SIZE, shuffle=False, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
+    TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/animal10n-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
+    TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/animal10n-test", batch_size=cfg.BATCH_SIZE, shuffle=False, world_size=WORLD_SIZE, rank=RANK, num_workers=cfg.NUM_WORKERS, pin_memory=True)()
 
     best_accuracy = 0
     #create folders if doesn't exist.

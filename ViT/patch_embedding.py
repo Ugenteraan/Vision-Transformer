@@ -42,17 +42,19 @@ class PatchEmbedding(nn.Module):
         return self.patch_linear_module(patched_image_tensors)
 
     def cls_token_concat(self, linear_projected_tensors):
-        '''Receives the image patches that has been linearly projected and appends a learnable parameter tensor at the end of the input tensor.
+        '''Receives the image patches that has been linearly projected and appends a learnable parameter tensor at the start of the input tensor.
 
         Input:
             patched_image_tensors -- A tensor of shape [batch size, total number of patches, a single flattened image dimension].
         '''
         batch_size = linear_projected_tensors.size(0)
-        cls_token = torch.ones(batch_size, 1, self.patch_embedding_dim).to(self.device)
 
-        cls_concat_tensors = torch.cat([linear_projected_tensors, cls_token], dim=1)
+        cls_token = nn.Parameter(torch.randn(1, 1, self.patch_embedding_dim))
+        batched_cls_token = einops.repeat(cls_token, '() n e -> b n e', b=batch_size)
 
-        return cls_concat_tensors
+        cls_concat_tensor = torch.cat([batched_cls_token, linear_projected_tensors], dim=1)
+
+        return cls_concat_tensor
 
 
     def get_non_overlapping_patches(self, inp):

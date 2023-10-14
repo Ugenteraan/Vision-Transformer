@@ -8,18 +8,27 @@ import torch.nn as nn
 import einops.layers.torch as einops_torch
 
 
-class MLPHead(nn.Sequential):
+class MLPHead(nn.Module):
     '''Final classification MLP layer.
     '''
 
     def __init__(self, patch_embedding_dim, num_classes):
         '''Param init.
         '''
+        super(MLPHead, self).__init__()
 
-        super().__init__(
-                        einops_torch.Reduce('b n e -> b e', reduction='mean'), #from [batch size, patch num, patch embedding] -> [batch size, patch embedding] by averaging the 2nd dim.
-                        nn.LayerNorm(patch_embedding_dim),
-                        nn.Linear(patch_embedding_dim, num_classes)
-                      )
+
+        self.layer_norm = nn.LayerNorm(patch_embedding_dim)
+        self.classification_mlp = nn.Linear(patch_embedding_dim, num_classes)
+
+
+    def forward(self, x):
+        extracted_cls_token = x[:, 0, :].squeeze(1) #first position in the patch num dimension. That's where the CLS token was initialized. Should be the size of [batch size, patch embedding] since we removed the 1 in the first dimension.
+
+        x = self.layer_norm(extracted_cls_token)
+        x = self.classification_mlp(x)
+
+        return x
+
 
 

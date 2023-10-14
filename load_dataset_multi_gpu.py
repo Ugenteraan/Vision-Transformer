@@ -33,9 +33,10 @@ class LoadDeeplakeDataset:
     def collate_fn(self, batch_data):
         '''Custom collate function to preprocess the batch dataset.
         '''
-        
+
         return {
-                'images': torch.stack([x['images'] for x in batch_data]),
+                #we perform the grayscale to rgb conversion here since lambda func throws an error in multi gpu process.
+                'images': torch.stack([x['images'].repeat(int(3/x['images'].size(0)), 1, 1) for x in batch_data]),
                 'labels': torch.stack([torch.from_numpy(x['labels']) for x in batch_data])
             }
 
@@ -48,11 +49,9 @@ class LoadDeeplakeDataset:
             transforms.RandomRotation(20),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
-            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1)),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
         ])
-
 
 
 
@@ -62,7 +61,6 @@ class LoadDeeplakeDataset:
             # transforms.ToPILImage(),
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1)),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
