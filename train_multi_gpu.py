@@ -84,6 +84,7 @@ def main(gpu):
 
         total_train_data=0 #to verify the distributed training.
         train_idx = 0
+        print(f"Training has started for epoch {epoch_idx} with learning rate of {utils.get_opti_lr(OPTIMIZER)}")
         for train_idx, data in enumerate(TRAIN_DATALOADER):
 
             train_X, train_Y = data['images'].cuda(non_blocking=True), data['labels'].cuda(non_blocking=True)

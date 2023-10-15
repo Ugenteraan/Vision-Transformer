@@ -57,3 +57,11 @@ def plot_loss_acc(path, num_epoch,  train_accuracies, train_losses,
     return None
 
 
+def get_opti_lr(optimizer):
+    '''Returns the optimizer's current learning rate parameter.
+    '''
+
+    for param_group in optimizer.param_groups:
+        return param_group['lr']
+
+

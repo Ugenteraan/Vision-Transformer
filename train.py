@@ -68,6 +68,7 @@ def main():
 
         total_train_data = 0
         train_idx = 0
+        print(f"Training has started for epoch {epoch_idx} with learning rate of {utils.get_opti_lr(OPTIMIZER)}")
         for train_idx, data in enumerate(TRAIN_DATALOADER):
 
             train_X, train_Y = data['images'].to(DEVICE), data['labels'].to(DEVICE)
