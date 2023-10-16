@@ -12,16 +12,16 @@ class MLPHead(nn.Module):
     '''Final classification MLP layer.
     '''
 
-    def __init__(self, patch_embedding_dim, num_classes):
+    def __init__(self, patch_embedding_dim, num_classes, expansion_factor=2):
         '''Param init.
         '''
         super(MLPHead, self).__init__()
 
 
         self.classification_head = nn.Sequential(nn.LayerNorm(patch_embedding_dim),
-                                                 nn.Linear(patch_embedding_dim, patch_embedding_dim),
+                                                 nn.Linear(patch_embedding_dim, patch_embedding_dim*expansion_factor),
                                                  nn.GELU(),
-                                                 nn.Linear(patch_embedding_dim, num_classes))
+                                                 nn.Linear(patch_embedding_dim*expansion_factor, num_classes))
 
 
     def forward(self, x):
