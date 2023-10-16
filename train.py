@@ -80,7 +80,7 @@ def main():
             train_batch_loss = CRITERION(train_predictions, train_Y.reshape(-1))
             train_batch_loss.backward()
             OPTIMIZER.step()
-
+            SCHEDULER.step()
 
             train_batch_accuracy = utils.calculate_accuracy(batch_predictions=train_predictions.detach(), batch_targets=train_Y.detach())
             train_epoch_accuracy += train_batch_accuracy
