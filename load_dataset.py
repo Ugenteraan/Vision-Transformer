@@ -42,8 +42,8 @@ class LoadDeeplakeDataset:
             transforms.Resize((cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH)),
             transforms.RandomRotation(cfg.RANDOM_ROTATION),
             transforms.RandomHorizontalFlip(),
-            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1)),
-            transforms.ToTensor()
+            transforms.ToTensor(),
+            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1))
         ])
 
     @staticmethod
@@ -52,8 +52,7 @@ class LoadDeeplakeDataset:
             # transforms.ToPILImage(),
             transforms.Resize((cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH)),
             transforms.ToTensor(),
-            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1)),
-            transforms.ToTensor()
+            transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1))
         ])
 
     def __call__(self):
