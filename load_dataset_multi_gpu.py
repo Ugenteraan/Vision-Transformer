@@ -45,11 +45,10 @@ class LoadDeeplakeDataset:
 
         return transforms.Compose([
             # transforms.ToPILImage(),
-            transforms.Resize((224, 224)),
-            transforms.RandomRotation(20),
+            transforms.Resize((cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH)),
+            transforms.RandomRotation(cfg.RANDOM_ROTATION),
             transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            transforms.ToTensor()
 
         ])
 
@@ -59,9 +58,8 @@ class LoadDeeplakeDataset:
     def testing_transformation():
         return  transforms.Compose([
             # transforms.ToPILImage(),
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            transforms.Resize((cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH)),
+            transforms.ToTensor()
         ])
 
     def __call__(self):
