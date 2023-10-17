@@ -4,12 +4,21 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import torch
 
 def calculate_accuracy(batch_predictions, batch_targets):
     '''Function to calculate the accuracy of predictions given the targets.
     '''
 
-    return (batch_predictions.argmax(dim=1) == batch_targets.reshape(-1, 1)).float().mean().cpu().numpy()
+    # return (batch_predictions.argmax(dim=1) == batch_targets.reshape(-1, 1)).float().mean().cpu().numpy()
+    num_data = batch_targets.size()[0]
+    predicted = torch.argmax(batch_predictions, dim=1)
+    correct_pred = torch.sum(predicted.reshape(-1) == batch_targets.reshape(-1))
+
+
+    accuracy = (correct_pred/num_data)*100 #convert to percentage.
+
+    return accuracy.item()
 
 
 

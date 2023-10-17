@@ -105,8 +105,8 @@ def main(gpu):
             total_train_data += train_batch_size
         SCHEDULER.step()
 
-        train_epoch_accuracy /= train_idx+1
-        train_epoch_loss /= train_idx+1
+        train_epoch_accuracy /= (train_idx+1)
+        train_epoch_loss /= (train_idx+1)
 
 
 
@@ -139,8 +139,8 @@ def main(gpu):
                 test_epoch_loss += test_batch_loss.item()
                 total_test_data += test_batch_size
 
-        test_epoch_accuracy /= test_idx+1
-        test_epoch_loss /= test_idx+1
+        test_epoch_accuracy /= (test_idx+1)
+        test_epoch_loss /= (test_idx+1)
 
 
         total_test_epoch_accuracy.append(test_epoch_accuracy)
