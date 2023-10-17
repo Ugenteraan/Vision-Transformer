@@ -13,6 +13,7 @@ from torchvision import transforms
 from torchsummary import summary
 import torch.distributed as dist
 import torch.multiprocessing as mp
+import neptune
 
 
 from ViT.ViT import VisionTransformer
@@ -23,7 +24,15 @@ import utils
 
 mp.set_sharing_strategy('file_system') #to avoid shared memory handles limit when there are too many batches at DataLoader.
 
+NEPTUNE_CLIENT = neptune.init_run(
+    project=cred.NEPTUNE_PROJECT,
+    api_token=cred.NEPTUNE_API_TOKEN
+)
 
+#parameter logging for neptune.
+NEPTUNE_PARAMS = {"dataset":"cifar-10", "learning_rate": cfg.LEARNING_RATE, "optimizer": "Adam", "scheduler":"StepLR", "step_size":cfg.SCHEDULER_STEP_SIZE, "scheduler_gamma":cfg.SCHEDULER_GAMMA, "batch_size":cfg.BATCH_SIZE, "total_epoch":cfg.TRAIN_EPOCH, "image_height":cfg.IMAGE_HEIGHT, "image_width":cfg.IMAGE_WIDTH, "image_channel":cfg.IMAGE_CHANNEL, "patch_size":cfg.PATCH_SIZE, "data_shuffle":cfg.SHUFFLE, "transformer_depth":cfg.TRANSFORMER_NETWORK_DEPTH, "attention_dropout":cfg.ATTN_DROPOUT_PROB, "num_heads":cfg.NUM_HEADS,  "mlp_head_dropout":cfg.FEEDFORWARD_DROPOUT_PROB}
+
+NEPTUNE_CLIENT['parameters'] = NEPTUNE_PARAMS
 
 def main(gpu):
 
@@ -119,6 +128,10 @@ def main(gpu):
         if not epoch_idx % plotting_epoch_step == 0:
             continue
 
+        #update neptune
+        NEPTUNE_CLIENT[f'train/loss-rank-{RANK}'].append(train_epoch_loss)
+        NEPTUNE_CLIENT[F'train/acc-rank-{RANK}'].append(train_epoch_accuracy)
+
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
 
@@ -147,6 +160,10 @@ def main(gpu):
         total_test_epoch_loss.append(test_epoch_loss)
 
         print(f"Epoch {epoch_idx} :\nTesting Accuracy: {test_epoch_accuracy}\nTesting Loss: {test_epoch_loss} Tested on: {total_test_data}\n\n")
+
+         #update neptune
+        NEPTUNE_CLIENT[f'test/loss-rank-{RANK}'].append(test_epoch_loss)
+        NEPTUNE_CLIENT[F'test/acc-rank-{RANK}'].append(test_epoch_accuracy)
 
         #plot a graph of accuracy and loss for train vs test.
         utils.plot_loss_acc(path=cfg.GRAPH_SAVE_FOLDER,

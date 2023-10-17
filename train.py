@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 from torchvision import transforms
 from torchsummary import summary
+import neptune
 
 from ViT.ViT import VisionTransformer
 from load_dataset import LoadDeeplakeDataset
@@ -18,6 +19,11 @@ import cred
 import cfg
 import utils
 
+
+NEPTUNE_CLIENT = neptune.init_run(
+    project=cred.NEPTUNE_PROJECT,
+    api_token=cred.NEPTUNE_API_TOKEN
+)
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() and cfg.DEVICE == 'gpu' else 'cpu')
 
@@ -43,6 +49,13 @@ SCHEDULER = torch.optim.lr_scheduler.StepLR(OPTIMIZER, step_size=cfg.SCHEDULER_S
 
 TRAIN_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/cifar10-train", batch_size=cfg.BATCH_SIZE, shuffle=cfg.SHUFFLE)()
 TEST_DATALOADER = LoadDeeplakeDataset(token=cred.ACTIVELOOP_TOKEN, deeplake_ds_name="hub://activeloop/cifar10-test", batch_size=cfg.BATCH_SIZE, shuffle=False)()
+
+
+#parameter logging for neptune.
+NEPTUNE_PARAMS = {"dataset":"cifar-10", "learning_rate": cfg.LEARNING_RATE, "optimizer": "Adam", "scheduler":"StepLR", "step_size":cfg.SCHEDULER_STEP_SIZE, "scheduler_gamma":cfg.SCHEDULER_GAMMA, "batch_size":cfg.BATCH_SIZE, "total_epoch":cfg.TRAIN_EPOCH, "image_height":cfg.IMAGE_HEIGHT, "image_width":cfg.IMAGE_WIDTH, "image_channel":cfg.IMAGE_CHANNEL, "patch_size":cfg.PATCH_SIZE, "data_shuffle":cfg.SHUFFLE, "transformer_depth":cfg.TRANSFORMER_NETWORK_DEPTH, "attention_dropout":cfg.ATTN_DROPOUT_PROB, "num_heads":cfg.NUM_HEADS,  "mlp_head_dropout":cfg.FEEDFORWARD_DROPOUT_PROB}
+
+NEPTUNE_CLIENT['parameters'] = NEPTUNE_PARAMS
+
 
 summary(MODEL, (cfg.IMAGE_CHANNEL, cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH))
 
@@ -92,6 +105,8 @@ def main():
         train_epoch_loss /= (train_idx+1)
 
 
+
+
         test_epoch_accuracy = 0
         test_epoch_loss = 0
 
@@ -99,6 +114,10 @@ def main():
         #we don't want to perform testing at every epoch
         if not epoch_idx % plotting_epoch_step == 0:
             continue
+
+        #update neptune
+        NEPTUNE_CLIENT['train/loss'].append(train_epoch_loss)
+        NEPTUNE_CLIENT['train/acc'].append(train_epoch_accuracy)
 
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
@@ -123,6 +142,10 @@ def main():
         test_epoch_accuracy /= (test_idx+1)
         test_epoch_loss /= (test_idx+1)
 
+        #update neptune
+        NEPTUNE_CLIENT['test/loss'].append(test_epoch_loss)
+        NEPTUNE_CLIENT['test/acc'].append(test_epoch_accuracy)
+
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
 
@@ -142,6 +165,7 @@ def main():
             torch.save(MODEL, f"{cfg.MODEL_SAVE_FOLDER}model.pth")
             best_accuracy = test_epoch_accuracy
 
+    NEPTUNE_CLIENT.stop() #end the neptune connection.
 
 
 if __name__ == '__main__':
