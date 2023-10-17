@@ -116,8 +116,8 @@ def main():
             continue
 
         #update neptune
-        NEPTUNE_CLIENT[f'train/loss-every-{plot_loss_acc}-epoch'].append(train_epoch_loss)
-        NEPTUNE_CLIENT[f'train/acc-every-{plot_loss_acc}-epoch'].append(train_epoch_accuracy)
+        NEPTUNE_CLIENT[f'train/loss-every-{plotting_epoch_step}-epoch'].append(train_epoch_loss)
+        NEPTUNE_CLIENT[f'train/acc-every-{plotting_epoch_step}-epoch'].append(train_epoch_accuracy)
 
         total_train_epoch_accuracy.append(train_epoch_accuracy)
         total_train_epoch_loss.append(train_epoch_loss)
@@ -143,8 +143,8 @@ def main():
         test_epoch_loss /= (test_idx+1)
 
         #update neptune
-        NEPTUNE_CLIENT[f'test/loss-every-{plot_loss_acc}-epoch'].append(test_epoch_loss)
-        NEPTUNE_CLIENT[f'test/acc-every-{plot_loss_acc}-epoch'].append(test_epoch_accuracy)
+        NEPTUNE_CLIENT[f'test/loss-every-{plotting_epoch_step}-epoch'].append(test_epoch_loss)
+        NEPTUNE_CLIENT[f'test/acc-every-{plotting_epoch_step}-epoch'].append(test_epoch_accuracy)
 
         total_test_epoch_accuracy.append(test_epoch_accuracy)
         total_test_epoch_loss.append(test_epoch_loss)
