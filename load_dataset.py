@@ -40,8 +40,9 @@ class LoadDeeplakeDataset:
         return transforms.Compose([
             # transforms.ToPILImage(),
             transforms.Resize((cfg.IMAGE_HEIGHT, cfg.IMAGE_WIDTH)),
-            transforms.RandomRotation(cfg.RANDOM_ROTATION),
             transforms.RandomHorizontalFlip(),
+            transforms.ColorJitter(brightness=cfg.COLOR_JITTER_BRIGHTNESS, hue=cfg.COLOR_JITTER_HUE),
+            transforms.RandomAffine(degrees=cfg.RANDOM_AFFINE_ROTATION_RANGE, translate=cfg.RANDOM_AFFINE_TRANSLATE_RANGE, scale=cfg.RANDOM_AFFINE_SCALE_RANGE),
             transforms.ToTensor(),
             transforms.Lambda(lambda x: x.repeat(int(3/x.shape[0]), 1, 1))
         ])
