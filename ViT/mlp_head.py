@@ -9,7 +9,7 @@ import einops.layers.torch as einops_torch
 
 
 class MLPHead(nn.Module):
-    '''Final classification MLP layer.
+    '''Final classification MLP layer. This implementation make use of the entire output from the final transformer encoder instead of just the CLS token tensor.
     '''
 
     def __init__(self, patch_embedding_dim, num_classes, expansion_factor=2):
@@ -18,16 +18,16 @@ class MLPHead(nn.Module):
         super(MLPHead, self).__init__()
 
 
-        self.classification_head = nn.Sequential(nn.LayerNorm(patch_embedding_dim),
+        self.classification_head = nn.Sequential(einops_torch.Reduce('b n e -> b e', reduction='mean'),
+                                                 nn.LayerNorm(patch_embedding_dim),
                                                  nn.Linear(patch_embedding_dim, patch_embedding_dim*expansion_factor),
                                                  nn.GELU(),
                                                  nn.Linear(patch_embedding_dim*expansion_factor, num_classes))
 
 
     def forward(self, x):
-        extracted_cls_token = x[:, 0, :].squeeze(1) #first position in the patch num dimension. That's where the CLS token was initialized. Should be the size of [batch size, patch embedding] since we removed the 1 in the first dimension.
 
-        out = self.classification_head(extracted_cls_token)
+        out = self.classification_head(x)
 
         return out
 
