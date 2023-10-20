@@ -58,13 +58,13 @@ class LoadDeeplakeDataset:
 
     def __call__(self):
 
-        places205_dataset = deeplake.load(self.deeplake_ds_name, token=self.token)
+        deeplake_dataset = deeplake.load(self.deeplake_ds_name, token=self.token)
 
         dataloader = None
         if self.mode == 'train':
-            dataloader = places205_dataset.dataloader().transform({'images':self.training_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
+            dataloader = deeplake_dataset.dataloader().transform({'images':self.training_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
         else:
-            dataloader = places205_dataset.dataloader().transform({'images':self.testing_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
+            dataloader = deeplake_dataset.dataloader().transform({'images':self.testing_transformation(), 'labels':None}).batch(self.batch_size).shuffle(self.shuffle).pytorch(collate_fn=self.collate_fn, decode_method={'images':'pil'})
 
         return dataloader
 
