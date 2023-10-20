@@ -7,7 +7,7 @@ cred.py
 **.log
 **/*.pt
 # C extensions
-
+**/.DS_Store
 *.so
 
 # Distribution / packaging
