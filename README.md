@@ -96,41 +96,52 @@ For both the experiments, the same parameters were used.
 
 ### CLS Token MLP Head
 
-The training loss for this experiment:
+Training Loss:
 
-<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/2nd%20-%20test_loss-every-5-epoch.png?raw=true" width="600" height="300">
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/1st%20-%20train_loss-every-5-epoch.png?raw=true" width="550" height="250">
 
+Training Accuracy:
 
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/1st%20-%20train_acc-every-5-epoch.png?raw=true" width="550" height="250">
+
+Testing Loss:
+
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/1st%20-%20test_loss-every-5-epoch.png?raw=true" width="550" height="250">
+
+Testing Accuracy:
+
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/1st%20-%20test_acc-every-5-epoch.png?raw=true" width="550" height="250">
 
 
 
 ### Full MLP Head
 
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/2nd%20-%20train_loss-every-5-epoch.png?raw=true" width="550" height="250">
+
+Training Accuracy:
+
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/2nd%20-%20train_acc-every-5-epoch.png?raw=true" width="550" height="250">
+
+Testing Loss:
+
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/2nd%20-%20test_loss-every-5-epoch.png?raw=true" width="550" height="250">
+
+Testing Accuracy:
+
+<img src="https://github.com/Ugenteraan/Vanilla-ViT/blob/main/readme_files/2nd%20-%20test_acc-every-5-epoch.png?raw=true" width="550" height="250">
+
+
+
+## Conclusion
+
+It is clear to see that the results from both the experiments are strikingly similar. The loss of the test set in both experiments starts to increase after a certain point. That probably indicates overfitting. Regardless, the highest accuracy for both the experiments were around 68%. 
+
+Perhaps for small-scale expriment such as this, the implementation of the MLP head does not affect too much. Further experiments are needed to confirm the better implementation. Maybe the attention maps would be different when visualized. There's no point visualizing the attention maps in this experiment as it won't yield any insight due to the size of the dataset used as reported in [Understanding Why ViT Trains Badly on Small Datasets: An Intuitive Perspective](https://arxiv.org/pdf/2302.03751.pdf#:~:text=On%20the%20other%20hand%2C%20vision,is%20still%20lower%20than%20CNN's.).
+
+
+
+
 ## License
 
 MIT
 
-**Free Software, Hell Yeah!**
-
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
-
-   [dill]: <https://github.com/joemccann/dillinger>
-   [git-repo-url]: <https://github.com/joemccann/dillinger.git>
-   [john gruber]: <http://daringfireball.net>
-   [df1]: <http://daringfireball.net/projects/markdown/>
-   [markdown-it]: <https://github.com/markdown-it/markdown-it>
-   [Ace Editor]: <http://ace.ajax.org>
-   [node.js]: <http://nodejs.org>
-   [Twitter Bootstrap]: <http://twitter.github.com/bootstrap/>
-   [jQuery]: <http://jquery.com>
-   [@tjholowaychuk]: <http://twitter.com/tjholowaychuk>
-   [express]: <http://expressjs.com>
-   [AngularJS]: <http://angularjs.org>
-   [Gulp]: <http://gulpjs.com>
-
-   [PlDb]: <https://github.com/joemccann/dillinger/tree/master/plugins/dropbox/README.md>
-   [PlGh]: <https://github.com/joemccann/dillinger/tree/master/plugins/github/README.md>
-   [PlGd]: <https://github.com/joemccann/dillinger/tree/master/plugins/googledrive/README.md>
-   [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
-   [PlMe]: <https://github.com/joemccann/dillinger/tree/master/plugins/medium/README.md>
-   [PlGa]: <https://github.com/RahulHP/dillinger/blob/master/plugins/googleanalytics/README.md>
